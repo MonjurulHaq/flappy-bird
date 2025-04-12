@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, time
 pygame.init()
 
 class Game:
@@ -7,19 +7,37 @@ class Game:
         self.height = 768
         self.scale_factor = 1.5
         self.win = pygame.display.set_mode((self.width, self.height))
-        
+        self.clock = pygame.time.Clock()
+        self.moveSpeed=300
         self.setBgAndGround()
         
         self.gameLoop()
 
     def gameLoop(self):
+        last_time = time.time()
         while True:
+            #calculating delta time
+            new_time = time.time()
+            dt = new_time-last_time
+            last_time = new_time
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             
+            self.updateAll(dt)
+            self.drawAll()
             pygame.display.update()
+            self.clock.tick(60)
+    
+    def updateAll(self,dt):
+        self.ground1_rect.x -= int(self.moveSpeed*dt)
+        self.ground2_rect.x -= int(self.moveSpeed*dt)
+        
+        if self.ground1_rect.right<0:
+            self.ground1_rect.x = self.ground2_rect.right
+        if self.ground2_rect.right<0:
+            self.ground2_rect.x = self.ground1_rect.right
             
     def drawAll(self):
         self.win.blit(self.bg_img,(0,-300))
@@ -36,7 +54,7 @@ class Game:
         
         self.ground1_rect.x = 0
         self.ground2_rect.x = self.ground1_rect.right
-        self.ground1_rect.y = 700
-        self.ground2_rect.y = 700
+        self.ground1_rect.y = 568
+        self.ground2_rect.y = 568
     
 game = Game()
