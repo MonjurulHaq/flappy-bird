@@ -11,6 +11,11 @@ class Game:
         self.win = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
         self.moveSpeed=250
+        self.start_monitoring = False
+        self.score = 0
+        self.font = pygame.font.Font("assets/font.ttf", 24)
+        self.score_text = self.font.render("Score : 0 ", True, (255,255,255))
+        self.score_text_rect = self.score_text.get_rect(center = (100,30))
         self.bird=Bird(self.scale_factor)
         self.is_enter_pressed = False
         self.pipes=[]
@@ -39,9 +44,20 @@ class Game:
             
             self.updateAll(dt)
             self.checkCollisions()
+            self.checkScore()
             self.drawAll()
             pygame.display.update()
             self.clock.tick(60)
+    
+    def checkScore(self):
+        if len(self.pipes)>0:
+            if (self.bird.rect.left>self.pipes[0].rect_down.left and 
+            self.bird.rect.right<self.pipes[0].rect_down.right and not self.start_monitoring):
+                self.start_monitoring = True
+            if self.bird.rect.left>self.pipes[0].rect_down.right and self.start_monitoring:
+                self.start_monitoring = False
+                self.score +=1
+                self.score_text = self.font.render(f"Score : {self.score} ", True, (255,255,255))
     
     def checkCollisions(self):
         if len(self.pipes):
@@ -51,9 +67,7 @@ class Game:
             if (self.bird.rect.colliderect(self.pipes[0].rect_down) or 
             self.bird.rect.colliderect(self.pipes[0].rect_up)):
                 self.is_enter_pressed = False
-                
-        
-            
+                          
     def updateAll(self,dt):
         if self.is_enter_pressed:
             self.ground1_rect.x -= int(self.moveSpeed*dt)
@@ -84,6 +98,7 @@ class Game:
         self.win.blit(self.ground1_img, self.ground1_rect)
         self.win.blit(self.ground2_img, self.ground2_rect)
         self.win.blit(self.bird.image,self.bird.rect)
+        self.win.blit(self.score_text,self.score_text_rect)
 
     def setBgAndGround(self):
         self.bg_img = pygame.transform.scale_by(pygame.image.load("assets/bg.png").convert(),self.scale_factor)

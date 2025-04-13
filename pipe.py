@@ -8,7 +8,7 @@ class Pipe:
         self.rect_up = self.img_up.get_rect()
         self.rect_down = self.img_down.get_rect()
         
-        self.pipe_distance = 150
+        self.pipe_distance = 200
         self.rect_up.y = randint(250,520)
         self.rect_up.x = 600
         self.rect_down.y = self.rect_up.y-self.pipe_distance-self.rect_up.height
