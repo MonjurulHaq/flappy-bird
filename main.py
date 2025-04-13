@@ -1,5 +1,6 @@
 import pygame, sys, time
 from bird import Bird
+from pipe import Pipe
 pygame.init()
 
 class Game:
@@ -12,6 +13,8 @@ class Game:
         self.moveSpeed=250
         self.bird=Bird(self.scale_factor)
         self.is_enter_pressed = False
+        self.pipes=[]
+        self.pipes_counter = 71
         self.setBgAndGround()
         
         self.gameLoop()
@@ -38,6 +41,8 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
     
+    # def checkC
+    
     def updateAll(self,dt):
         if self.is_enter_pressed:
             self.ground1_rect.x -= int(self.moveSpeed*dt)
@@ -47,11 +52,24 @@ class Game:
                 self.ground1_rect.x = self.ground2_rect.right
             if self.ground2_rect.right<0:
                 self.ground2_rect.x = self.ground1_rect.right
+            if self.pipes_counter>70:
+                self.pipes.append(Pipe(self.scale_factor, self.moveSpeed))
+                self.pipes_counter = 0
+            self.pipes_counter+=1
+            #moving pipes
+            for pipe in self.pipes:
+                pipe.update(dt)
+            #removing pipes out of screen 
+            if len(self.pipes)!=0:
+                if self.pipes[0].rect_up.right<0:
+                    self.pipes.pop(0)
                 
             self.bird.update(dt)
             
     def drawAll(self):
         self.win.blit(self.bg_img,(0,-300))
+        for pipe in self.pipes:
+            pipe.drawPips(self.win)
         self.win.blit(self.ground1_img, self.ground1_rect)
         self.win.blit(self.ground2_img, self.ground2_rect)
         self.win.blit(self.bird.image,self.bird.rect)
