@@ -33,16 +33,27 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         self.is_enter_pressed = True
+                        self.bird.update_on = True
                     if event.key == pygame.K_SPACE and self.is_enter_pressed:
                         self.bird.flap(dt)
             
             self.updateAll(dt)
+            self.checkCollisions()
             self.drawAll()
             pygame.display.update()
             self.clock.tick(60)
     
-    # def checkC
-    
+    def checkCollisions(self):
+        if len(self.pipes):
+            if self.bird.rect.bottom > 568:
+                self.bird.update_on = False
+                self.is_enter_pressed = False
+            if (self.bird.rect.colliderect(self.pipes[0].rect_down) or 
+            self.bird.rect.colliderect(self.pipes[0].rect_up)):
+                self.is_enter_pressed = False
+                
+        
+            
     def updateAll(self,dt):
         if self.is_enter_pressed:
             self.ground1_rect.x -= int(self.moveSpeed*dt)
@@ -64,7 +75,7 @@ class Game:
                 if self.pipes[0].rect_up.right<0:
                     self.pipes.pop(0)
                 
-            self.bird.update(dt)
+        self.bird.update(dt)
             
     def drawAll(self):
         self.win.blit(self.bg_img,(0,-300))

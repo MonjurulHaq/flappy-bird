@@ -12,14 +12,16 @@ class Bird(pygame.sprite.Sprite):
         self.gravity = 10
         self.flap_speed = 250
         self.anim_counter = 0
+        self.update_on = False
         
     def update(self, dt):
-        self.playAnimation()
-        self.applyGravity(dt)
-        
-        if self.rect.y <= 0:
-            self.rect.y = 0
-            self.y_speed = 1
+        if self.update_on:
+            self.playAnimation()
+            self.applyGravity(dt)
+            
+            if self.rect.y <= 0:
+                self.rect.y = 0
+                self.y_speed = 1
     
     def applyGravity(self, dt):
         self.y_speed += self.gravity *dt
