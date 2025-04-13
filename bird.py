@@ -38,3 +38,8 @@ class Bird(pygame.sprite.Sprite):
             self.anim_counter=0
         
         self.anim_counter+=1
+        
+    def resetPosition(self):
+        self.rect = self.image.get_rect(center = (100,100))
+        self.y_speed = 0
+        self.anim_counter = 0

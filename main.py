@@ -16,8 +16,12 @@ class Game:
         self.font = pygame.font.Font("assets/font.ttf", 24)
         self.score_text = self.font.render("Score : 0 ", True, (255,255,255))
         self.score_text_rect = self.score_text.get_rect(center = (100,30))
+        
+        self.restart_text = self.font.render("Restart", True, (255,255,255))
+        self.restart_text_rect = self.restart_text.get_rect(center = (300,600))
         self.bird=Bird(self.scale_factor)
         self.is_enter_pressed = False
+        self.is_game_started = True
         self.pipes=[]
         self.pipes_counter = 71
         self.setBgAndGround()
@@ -41,6 +45,9 @@ class Game:
                         self.bird.update_on = True
                     if event.key == pygame.K_SPACE and self.is_enter_pressed:
                         self.bird.flap(dt)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.restart_text_rect.collidepoint(pygame.mouse.get_pos()):
+                        self.restartGame()
             
             self.updateAll(dt)
             self.checkCollisions()
@@ -48,6 +55,16 @@ class Game:
             self.drawAll()
             pygame.display.update()
             self.clock.tick(60)
+    
+    def restartGame(self):
+        self.score = 0
+        self.score_text = self.font.render("Score : 0 ", True, (255,255,255))
+        self.is_enter_pressed = False
+        self.is_game_started = True
+        self.bird.resetPosition()
+        self.pipes.clear()
+        self.pipes_counter = 71
+        self.bird.update_on = False
     
     def checkScore(self):
         if len(self.pipes)>0:
@@ -64,9 +81,11 @@ class Game:
             if self.bird.rect.bottom > 568:
                 self.bird.update_on = False
                 self.is_enter_pressed = False
+                self.is_game_started =False
             if (self.bird.rect.colliderect(self.pipes[0].rect_down) or 
             self.bird.rect.colliderect(self.pipes[0].rect_up)):
                 self.is_enter_pressed = False
+                self.is_game_started =False
                           
     def updateAll(self,dt):
         if self.is_enter_pressed:
@@ -99,6 +118,8 @@ class Game:
         self.win.blit(self.ground2_img, self.ground2_rect)
         self.win.blit(self.bird.image,self.bird.rect)
         self.win.blit(self.score_text,self.score_text_rect)
+        if not self.is_game_started:
+            self.win.blit(self.restart_text, self.restart_text_rect)
 
     def setBgAndGround(self):
         self.bg_img = pygame.transform.scale_by(pygame.image.load("assets/bg.png").convert(),self.scale_factor)
