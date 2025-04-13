@@ -30,7 +30,9 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         self.is_enter_pressed = True
-                        
+                    if event.key == pygame.K_SPACE and self.is_enter_pressed:
+                        self.bird.flap(dt)
+            
             self.updateAll(dt)
             self.drawAll()
             pygame.display.update()
